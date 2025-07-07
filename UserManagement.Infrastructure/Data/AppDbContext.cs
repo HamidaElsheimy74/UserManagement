@@ -36,7 +36,7 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, long, IdentityUs
         builder.Entity<AppUserRoles>(entity =>
         {
             entity.ToTable("AspNetUserRoles");
-            entity.HasKey(ur => new { ur.Id });
+            entity.HasKey(ur => new { ur.UserId, ur.RoleId });
             entity.HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId);

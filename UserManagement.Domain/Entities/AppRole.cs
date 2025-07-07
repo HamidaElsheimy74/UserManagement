@@ -12,7 +12,6 @@ public class AppRole : IdentityRole<long>
     public DateTime ModifiedAt { set; get; } = DateTime.UtcNow;
     public DateTime? DeletedAt { set; get; } = null;
     public bool IsDeleted { get; set; } = false;
-    public string Name { set; get; }
     public string Description { set; get; }
     public List<AppUserRoles> UserRoles { set; get; }
 }

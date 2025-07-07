@@ -11,38 +11,46 @@ public class SeedAppData
         {
             if (!userManager.Users.Any())
             {
-                var users = new List<(AppUser User, string Role, string description, string Password)>
+                var creatAt = DateTime.UtcNow;
+                AppUser createdUser = new AppUser();
+                IdentityResult createdRole = new IdentityResult();
+                var users = new List<(AppUser User, AppRole role, string Password)>
                 {
                     (new AppUser {
                        UserName = "HamidaAdmin",
-                        Email = "admin@gmail.com"
-                    }, "Admin", "Admin Role","Admin@1234"),
+                        Email = "admin@gmail.com", CreatedAt = creatAt,
+                    },  new AppRole{Name ="Admin",Description = "Admin Role", CreatedAt = creatAt },"Admin@1234"),
                     (new AppUser
                     {
                         UserName = "HamidaUser",
-                        Email = "User@gmail.com" },
-                        "User", "User Role ", "User@1234")
+                        Email = "User@gmail.com", CreatedAt = creatAt },
+                        new AppRole{Name = "User", Description = "User Role ", CreatedAt = creatAt  }, "User@1234")
                 };
 
-                foreach (var (user, role, description, password) in users)
+                foreach (var (user, role, password) in users)
                 {
 
-                    var createUser = await userManager.CreateAsync(user, password);
+                    var identityRole = await roleManager.CreateAsync(role);
 
 
-                    if (createUser.Succeeded)
+                    if (identityRole.Succeeded)
                     {
-                        var identityRole = new AppRole { Name = role, Description = description };
-                        var createdRole = await roleManager.CreateAsync(identityRole);
+                        var identityUser = await userManager.CreateAsync(user, password);
 
-                        if (createdRole.Succeeded)
+                        if (identityUser.Succeeded)
                         {
-                            await userManager.AddToRoleAsync(user, role);
+                            await context.AspNetUserRoles.AddAsync(new AppUserRoles
+                            {
+                                UserId = user.Id,
+                                RoleId = role.Id,
+                                CreatedAt = creatAt,
+                            });
+
+                            await context.SaveChangesAsync();
                         }
                     }
 
                 }
-
             }
         }
         catch (Exception ex)

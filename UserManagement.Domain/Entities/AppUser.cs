@@ -12,9 +12,7 @@ public class AppUser : IdentityUser<long>
     public DateTime ModifiedAt { set; get; } = DateTime.UtcNow;
     public DateTime? DeletedAt { set; get; } = null;
     public bool IsDeleted { get; set; } = false;
-    public string UserName { set; get; }
     public string Email { set; get; }
-    public string Password { set; get; }
     public List<AppUserRoles> UserRoles { set; get; }
 
 }

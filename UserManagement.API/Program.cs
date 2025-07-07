@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
 using System.Text;
 using System.Threading.RateLimiting;
+using UserManagement.API.DI;
 using UserManagement.API.Helpers;
 using UserManagement.Domain.Entities;
 using UserManagement.Infrastructure.Data;
@@ -119,7 +122,28 @@ services.AddCors(options =>
 });
 
 
+services.AddApplicationServices();
 
+services.AddLocalization(options => options.ResourcesPath = "Resources");
+services.Configure<RequestLocalizationOptions>(option =>
+{
+    var supprtedCultures = new[]
+    {
+        new CultureInfo(Language.en.ToString()),
+        new CultureInfo(Language.hi.ToString()),
+
+    };
+
+    option.DefaultRequestCulture = new RequestCulture(Language.en.ToString());
+    option.SupportedCultures = supprtedCultures;
+    option.SupportedUICultures = supprtedCultures;
+
+    option.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new QueryStringRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
+});
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -134,7 +158,6 @@ using (var scope = app.Services.CreateScope())
         var roleManager = scopeServices.GetRequiredService<RoleManager<AppRole>>();
         await context.Database.MigrateAsync();
         await SeedAppData.SeedAsync(context, loggerFactory, userManager, roleManager);
-
 
     }
     catch (Exception ex)
@@ -154,6 +177,7 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
+app.UseRequestLocalization();
 app.MapControllers();
 
 app.Run();

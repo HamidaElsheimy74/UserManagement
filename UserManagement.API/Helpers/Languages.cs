@@ -2,5 +2,5 @@
 
 public enum Language
 {
-    En = 1, Hindi
+    en = 1, hi
 }

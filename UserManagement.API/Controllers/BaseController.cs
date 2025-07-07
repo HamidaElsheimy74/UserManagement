@@ -9,7 +9,7 @@ public class BaseController : ControllerBase
     protected Language GetLanguage()
     {
         var language = Request.Headers["Accept-Language"];
-        if (language == "en") return Language.En;
-        else return Language.Hindi;
+        if (language == "en") return Language.en;
+        else return Language.hi;
     }
 }
