@@ -1,4 +1,5 @@
 ﻿using UserManagement.Application.Interfaces;
+using UserManagement.Application.Mappings;
 using UserManagement.Application.Services;
 using UserManagement.Domain.Interfaces;
 using UserManagement.Infrastructure.Data.Repositories;
@@ -10,6 +11,9 @@ public static class ApplicationServicesDI
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddAutoMapper(typeof(RolesMappings));
+        services.AddAutoMapper(typeof(UserMappings));
+        services.AddAutoMapper(typeof(UserRolesMappings));
         services.AddScoped<IAccountServices, AccountServices>();
         services.AddScoped<IRoleServices, RoleServices>();
         services.AddScoped<IUserServices, UserServices>();

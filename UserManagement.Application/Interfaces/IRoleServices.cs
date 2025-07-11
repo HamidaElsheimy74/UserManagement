@@ -4,7 +4,7 @@ using UserManagement.Domain.Entities;
 namespace UserManagement.Application.Interfaces;
 public interface IRoleServices
 {
-    Task<IEnumerable<RoleDto>> GetAllRolesAsync();
+    Task<List<RoleDto>> GetAllRolesAsync();
     Task<RoleDto> GetRolesAsync(long roleId);
     Task<bool> CreateRoleAsync(AppRole role);
     Task<bool> UpdateRoleAsync(AppRole role);

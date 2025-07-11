@@ -27,22 +27,15 @@ public class UserRoleServices : IUserRoleServices
 
     public async Task<bool> AddUserRoleAsync(UserRoleDto userRoleDto)
     {
-        try
-        {
-            _logger.LogInformation("Adding user role: {@UserRoleDto}", userRoleDto);
-            if (userRoleDto == null)
-            {
-                _logger.LogWarning("User Role" + _localizer["RequiredDto"]);
-                return false;
-            }
 
-            return true;
-        }
-        catch (Exception ex)
+        _logger.LogInformation("Adding user role: {@UserRoleDto}", userRoleDto);
+        if (userRoleDto == null)
         {
+            _logger.LogWarning("User Role" + _localizer["RequiredDto"]);
             return false;
-
         }
+
+        return true;
     }
 
     public Task<bool> DeleteUserRoleAsync(long userId, long roleId)

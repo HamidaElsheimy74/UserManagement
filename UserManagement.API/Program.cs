@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using UserManagement.API.DI;
 using UserManagement.API.Helpers;
+using UserManagement.API.Middlewares;
 using UserManagement.Domain.Entities;
 using UserManagement.Infrastructure.Data;
 using UserManagement.Infrastructure.Data.SeedData;
@@ -167,7 +168,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 
