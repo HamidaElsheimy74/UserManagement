@@ -4,8 +4,6 @@ namespace UserManagement.Application.DTOs;
 public class LoginDto
 {
     [Required]
-    [EmailAddress]
-    [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email format.")]
     public string UserName { set; get; }
 
     [Required]

@@ -123,8 +123,23 @@
   <data name="AdminRoleDesc" xml:space="preserve">
     <value>व्यवस्थापक भूमिका</value>
   </data>
-  <data name="exists" xml:space="preserve">
+  <data name="Exists" xml:space="preserve">
     <value>पहले से मौजूद है.</value>
+  </data>
+  <data name="FailedCreation" xml:space="preserve">
+    <value>सृजन विफल रहा</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>अमान्य ईमेल</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>अवैध पासवर्ड</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>अमान्य रीफ़्रेश टोकन</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>अमान्य उपयोगकर्ता</value>
   </data>
   <data name="RequiredDto" xml:space="preserve">
     <value>डेटा आवश्यक है</value>

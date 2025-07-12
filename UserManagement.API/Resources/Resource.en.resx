@@ -123,8 +123,23 @@
   <data name="AdminRoleDesc" xml:space="preserve">
     <value>Admin Role</value>
   </data>
-  <data name="exists" xml:space="preserve">
+  <data name="Exists" xml:space="preserve">
     <value>is already exist.</value>
+  </data>
+  <data name="FailedCreation" xml:space="preserve">
+    <value>Creation failed</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Invalid Email</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Invalid password</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid Refresh Token</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Invalid User</value>
   </data>
   <data name="RequiredDto" xml:space="preserve">
     <value> data is required.</value>

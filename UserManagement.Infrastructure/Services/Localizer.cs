@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Localization;
-using System.Reflection;
 using UserManagement.Domain.Interfaces;
 
 namespace UserManagement.Infrastructure.Services;
@@ -14,8 +13,8 @@ public class Localizer : ILocalizer
 
     public string GetString(string key)
     {
-        var assemplyName = new AssemblyName(GetType().Assembly.FullName!);
-        var localizer = _factory.Create("Resources", assemplyName.Name!);
+        // var assemplyName = new AssemblyName(GetType().Assembly.FullName!);
+        var localizer = _factory.Create("Resource", "UserManagement.API"!);
         return localizer[key];
     }
 }

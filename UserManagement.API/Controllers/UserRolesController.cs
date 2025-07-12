@@ -4,75 +4,74 @@ using UserManagement.Application.DTOs;
 using UserManagement.Application.Interfaces;
 
 namespace UserManagement.API.Controllers;
-public class UserController : BaseController
+public class UserRolesController : BaseController
 {
-    private readonly IUserServices _userServices;
-    public UserController(IUserServices userServices)
+    private readonly IUserRoleServices _userRoleServices;
+    public UserRolesController(IUserRoleServices userRoleServices)
     {
-        _userServices = userServices;
+        _userRoleServices = userRoleServices;
     }
 
-    [HttpGet("GetAllUsers")]
+
+    [HttpGet("GetUserRoles")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetUserRoles()
+    {
+        var response = await _userRoleServices.GetUserRolesAsync();
+        return Ok(response);
+    }
+
+    [HttpGet("GetUserRole")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Produces("application/json")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetUserRole([FromQuery] long roleId, long userId)
     {
 
-        var response = await _userServices.GetAllUsersAsync();
+        var response = await _userRoleServices.GetUserRoleAsync(userId, roleId);
         return Ok(response);
 
     }
 
-    [HttpPost("AddUser")]
+    [HttpPost("AddUserRole")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateUser([FromBody] UserDto user)
+    public async Task<IActionResult> AddUserRole([FromBody] UserRoleDto userRoleDto)
     {
 
-        var response = await _userServices.CreateUserAsync(user);
+        var response = await _userRoleServices.AddUserRoleAsync(userRoleDto);
         return Ok(response);
 
     }
 
-    [HttpPut("UpdateUser")]
+    [HttpPut("UpdateUserRole")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
+    public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleDto userRoleDto)
     {
 
-        var response = await _userServices.UpdateUserAsync(user);
+        var response = await _userRoleServices.UpdateUserRoleAsync(userRoleDto);
         return Ok(response);
 
     }
 
-    [HttpDelete("DeleteUser")]
+    [HttpDelete("DeleteUserRole")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteUser([FromQuery] long userId)
+    public async Task<IActionResult> DeleteUserRole([FromQuery] long userId, long roleId)
     {
 
-        var response = await _userServices.DeleteUserAsync(userId);
-        return Ok(response);
-
-    }
-
-    [HttpGet("GetUser")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [Produces("application/json")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetUse([FromQuery] long userId)
-    {
-
-        var response = await _userServices.GetUserByIdAsync(userId);
+        var response = await _userRoleServices.DeleteUserRoleAsync(userId, roleId);
         return Ok(response);
 
     }

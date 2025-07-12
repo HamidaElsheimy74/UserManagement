@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
-using UserManagement.Common.Errors;
+using UserManagement.Common.Helpers;
 
 
 namespace UserManagement.API.Middlewares;

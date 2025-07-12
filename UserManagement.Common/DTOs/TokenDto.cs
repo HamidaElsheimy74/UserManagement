@@ -6,7 +6,7 @@ public class TokenDto
     }
     public TokenDto(string email, List<string> roles)
     {
-        email = email;
+        Email = email;
         Roles = roles;
     }
     public string Email { get; set; }
