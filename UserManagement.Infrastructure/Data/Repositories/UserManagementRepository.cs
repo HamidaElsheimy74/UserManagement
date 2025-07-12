@@ -61,4 +61,14 @@ public class UserManagementRepository<T> : IUserManagementRepository<T> where T 
         }
         return await query.ToListAsync();
     }
+
+    public async Task<T> WhereAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+    {
+        var query = _context.Set<T>().Where(predicate);
+        foreach (var item in includes)
+        {
+            query = query.Include(item);
+        }
+        return await query.FirstOrDefaultAsync();
+    }
 }

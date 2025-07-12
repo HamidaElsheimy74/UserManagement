@@ -34,7 +34,7 @@ public class RolesController : ControllerBase
     public async Task<IActionResult> GetRole(long roleId)
     {
 
-        var role = await _roleServices.GetRolesAsync(roleId);
+        var role = await _roleServices.GetRoleAsync(roleId);
         if (role == null)
         {
             return StatusCode(StatusCodes.Status400BadRequest);

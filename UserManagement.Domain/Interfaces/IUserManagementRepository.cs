@@ -11,5 +11,6 @@ public interface IUserManagementRepository<T> where T : class
     Task<bool> AnyAsync(Expression<Func<T, bool>> expression);
     Task<List<T>> GetWithIncludesAsync(params Expression<Func<T, object>>[] includes);
     Task<List<T>> Where(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
+    Task<T> WhereAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
 
 }

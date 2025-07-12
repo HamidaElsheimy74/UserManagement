@@ -1,4 +1,4 @@
-﻿namespace UserManagement.Common.Errors;
+﻿namespace UserManagement.Common.Helpers;
 public class APIException : APIResponse
 {
     public APIException(int statusCode, string message = null!, string details = null!) : base(statusCode, message)

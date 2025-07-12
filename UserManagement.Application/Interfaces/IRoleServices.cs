@@ -1,13 +1,13 @@
 ﻿using UserManagement.Application.DTOs;
-using UserManagement.Domain.Entities;
+using UserManagement.Common.Helpers;
 
 namespace UserManagement.Application.Interfaces;
 public interface IRoleServices
 {
-    Task<List<RoleDto>> GetAllRolesAsync();
-    Task<RoleDto> GetRolesAsync(long roleId);
-    Task<bool> CreateRoleAsync(AppRole role);
-    Task<bool> UpdateRoleAsync(AppRole role);
-    Task<bool> DeleteRoleAsync(long roleId);
+    Task<APIResponse> GetAllRolesAsync();
+    Task<APIResponse> GetRoleAsync(long roleId);
+    Task<APIResponse> CreateRoleAsync(RoleDto role);
+    Task<APIResponse> UpdateRoleAsync(RoleDto role);
+    Task<APIResponse> DeleteRoleAsync(long roleId);
 
 }

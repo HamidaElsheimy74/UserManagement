@@ -8,11 +8,11 @@ public class RolesMappings : Profile
     public RolesMappings()
     {
         CreateMap<AppRole, RoleDto>()
-            .ForMember(dest => dest.roleName, opt => opt.MapFrom(src => src.Name))
-             .ForMember(dest => dest.description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => src.ModifiedAt))
-            .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.roleId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name))
+             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedAt))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id))
             .ReverseMap();
 
 

@@ -21,6 +21,7 @@ public static class ApplicationServicesDI
         services.AddScoped(typeof(IUserManagementRepository<>), typeof(UserManagementRepository<>));
         services.AddScoped<IUserManagementUnitOfWork, UserManagementUnitOfWork>();
         services.AddSingleton<ILocalizer, Localizer>();
+        services.AddScoped<ITokenServices, TokenServices>();
         return services;
     }
 }
