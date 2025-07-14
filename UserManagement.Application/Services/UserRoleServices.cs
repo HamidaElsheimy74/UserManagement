@@ -134,15 +134,16 @@ public class UserRoleServices : IUserRoleServices
             return new APIResponse(400, "User roles " + _localizer["Required"]);
         }
         var userRole = await _userRoleRepository.WhereAsync(r => r.UserId == userRoleDto.UserId &&
-                                                    r.RoleId == userRoleDto.RoleId && !r.IsDeleted);
+                                                    r.RoleId == userRoleDto.RoleId);
         if (userRole == null)
         {
             _logger.LogError("Role data is not exist.");
-            return new APIResponse(400, "user roles " + _localizer["Exists"]);
+            return new APIResponse(400, "user roles " + _localizer["NotExists"]);
         }
 
-        userRole.RoleId = userRoleDto.RoleId;
+        userRole.IsDeleted = !userRole.IsDeleted;
         userRole.ModifiedAt = DateTime.UtcNow;
+        userRole.DeletedAt = null;
 
         await _userRoleRepository.UpdateAsync(userRole);
         await _unitOfWork.Save();
