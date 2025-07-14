@@ -51,8 +51,9 @@ public class UserServices : IUserServices
         }
         else
         {
-            var rolesExist = await _roleRepository.AnyAsync(obj => !obj.UserRoles.Any(ur => ur.RoleId != obj.Id || ur.IsDeleted));
-            if (!rolesExist)
+            var userRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+            var rolesExists = await _roleRepository.Where(obj => userRoleIds.Contains(obj.Id) && !obj.IsDeleted);
+            if (rolesExists.Count != userRoleIds.Count)
             {
                 _logger.LogError($"Invalid roles were inserted to the user.");
                 return new APIResponse(400, "Roles Added too the user are" + _localizer["NotValid"]);
@@ -83,22 +84,31 @@ public class UserServices : IUserServices
             _logger.LogError("UserId is not valid.");
             return new APIResponse(400, $"userId {userId} {_localizer["NotValid"]}");
         }
-        var user = await _userRepository.WhereAsync(u => u.Id == userId && !u.IsDeleted);
+        var user = await _userRepository.WhereAsync(u => u.Id == userId && !u.IsDeleted, r => r.UserRoles);
         if (user != null)
         {
             user.IsDeleted = true;
             user.DeletedAt = DateTime.UtcNow;
             user.ModifiedAt = DateTime.UtcNow;
-            await _userRepository.UpdateAsync(user);
-            await _unitOfWork.Save();
+            var isUpdated = await _userManager.UpdateAsync(user);
+
+            if (isUpdated.Succeeded && (user.UserRoles != null && user.UserRoles.Any()))
+            {
+                foreach (var userRole in user.UserRoles)
+                {
+                    userRole.IsDeleted = true;
+                    userRole.DeletedAt = DateTime.UtcNow;
+                }
+                await _unitOfWork.Save();
+            }
+
             _logger.LogTrace($"User with Id {userId} is deleted successfully.");
             return new APIResponse(200, "", true);
         }
         else
         {
             _logger.LogError($"User with Id {userId} does not exist.");
-            return new APIResponse(400, $"user with id {userId} {_localizer["Exists"]}");
-
+            return new APIResponse(400, $"user with id {userId} {_localizer["NotExists"]}");
         }
     }
 
@@ -124,7 +134,7 @@ public class UserServices : IUserServices
             return null;
         }
         var user = await _userRepository.WhereAsync(u => u.Id == userId && !u.IsDeleted);
-        return user == null ? new APIResponse(400, $"User with id {userId} {_localizer["Exists"]}")
+        return user == null ? new APIResponse(400, $"User with id {userId} {_localizer["NotExists"]}")
                 : new APIResponse(200, "", _mapper.Map<UserDto>(user));
     }
 
@@ -140,17 +150,35 @@ public class UserServices : IUserServices
         if (oldUser == null)
         {
             _logger.LogError("User is not exist.");
-            return new APIResponse(400, $"User with Id: {user.UserId} {_localizer["Exists"]}");
+            return new APIResponse(400, $"User with Id: {user.UserId} {_localizer["NotExists"]}");
         }
 
-        oldUser.Email = user.Email;
-        oldUser.ModifiedAt = DateTime.UtcNow;
 
-        var isUpdated = await _userManager.UpdateAsync(oldUser);
-        if (!isUpdated.Succeeded)
+        if (user.UserRoles.Count > 0)
         {
-            _logger.LogError($"User {user.Email} update failed: {string.Join(", ", isUpdated.Errors.Select(e => e.Description))}");
-            return new APIResponse(500, $"{_localizer["FailedUpdate"]} user with id {user.UserId}");
+            var userRolesIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+            var rolesExists = await _roleRepository.Where(obj => userRolesIds.Contains(obj.Id) && !obj.IsDeleted);
+            if (rolesExists.Count != userRolesIds.Count)
+            {
+                _logger.LogError($"Invalid roles were inserted to the user.");
+                return new APIResponse(400, "Roles Added too the user are" + _localizer["NotValid"]);
+            }
+            oldUser.Email = user.Email;
+            oldUser.ModifiedAt = DateTime.UtcNow;
+
+            var isUpdated = await _userManager.UpdateAsync(oldUser);
+            if (!isUpdated.Succeeded)
+            {
+                _logger.LogError($"User {user.Email} update failed: {string.Join(", ", isUpdated.Errors.Select(e => e.Description))}");
+                return new APIResponse(500, $"{_localizer["FailedUpdate"]} user with id {user.UserId}");
+            }
+
+            foreach (var userRole in user.UserRoles)
+            {
+                oldUser.UserRoles.Add(new AppUserRoles { RoleId = userRole.RoleId, UserId = oldUser.Id });
+            }
+
+            await _unitOfWork.Save();
         }
         _logger.LogTrace($"user with email {oldUser.Email} is Updated Successfully");
         return new APIResponse(200, "", true);

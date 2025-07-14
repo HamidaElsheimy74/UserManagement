@@ -7,5 +7,5 @@ public interface IAccountServices
 {
     Task<APIResponse> RegisterUser(RegisterDto userDto);
     Task<APIResponse> LoginUser(LoginDto userDto);
-    Task<APIResponse> RefeshToken(RefreshTokenModel model, string email);
+    Task<APIResponse> RefeshToken(RefreshTokenModel model);
 }

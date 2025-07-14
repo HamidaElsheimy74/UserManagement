@@ -138,8 +138,17 @@
   <data name="InvalidRefreshToken" xml:space="preserve">
     <value>Invalid Refresh Token</value>
   </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid Token</value>
+  </data>
   <data name="InvalidUser" xml:space="preserve">
     <value>Invalid User</value>
+  </data>
+  <data name="NotExists" xml:space="preserve">
+    <value>is Not Exists</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>is not found</value>
   </data>
   <data name="RequiredDto" xml:space="preserve">
     <value> data is required.</value>

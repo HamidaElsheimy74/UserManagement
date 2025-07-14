@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using UserManagement.Common.DTOs;
 using UserManagement.Common.Helpers;
 using UserManagement.Domain.Entities;
@@ -28,16 +27,18 @@ public class TokenServices : ITokenServices
         _userManager = userManager;
         _localizer = localizer;
     }
-    public async Task<APIResponse> DecodeToken(string token, ClaimsPrincipal user)
+    public async Task<APIResponse> DecodeToken(string token)
     {
         JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
         JwtSecurityToken decodedToken = handler.ReadToken(token) as JwtSecurityToken;
 
-        if (decodedToken != null && decodedToken.ValidTo < DateTime.UtcNow)
+        if (decodedToken == null || decodedToken.ValidTo > DateTime.UtcNow)
         {
-            return new APIResponse(400, $"{_localizer["TokenExpired"]}");
+            return new APIResponse(401, $"{_localizer["InvalidToken"]}");
         }
-        var tokenDto = JsonSerializer.Deserialize<TokenDto>(decodedToken!.Payload.SerializeToJson());
+        var email = decodedToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+        var roles = decodedToken.Claims.Where(c => c.Type == "role").Select(r => r?.Value).ToList();
+        var tokenDto = new TokenDto(email, roles);
 
         return new APIResponse(200, "", tokenDto);
     }
@@ -57,7 +58,7 @@ public class TokenServices : ITokenServices
 
     }
 
-    public async Task<APIResponse> RefreshTokenAsync(string token, string secretKey, string email)
+    public async Task<APIResponse> RefreshTokenAsync(string token, string secretKey, TokenDto tokenDto)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
@@ -70,17 +71,10 @@ public class TokenServices : ITokenServices
             ValidateLifetime = true
         }, out SecurityToken validatedToken);
 
-        var user = _userManager.FindByEmailAsync(email).Result;
-        if (user == null)
-        {
-            return new APIResponse(400, $"{_localizer["UserNotFound"]}");
-        }
-        var roles = _userManager.GetRolesAsync(user).Result.ToList();
-
         var generatedTokenResult = await GenerateTokenAsync(new TokenDto
         {
-            Email = user.Email!,
-            Roles = roles
+            Email = tokenDto.Email!,
+            Roles = tokenDto.Roles
         });
         return generatedTokenResult;
     }
@@ -91,8 +85,7 @@ public class TokenServices : ITokenServices
             {
                 new Claim(JwtRegisteredClaimNames.Email, tokenDto.Email),
             };
-        if (tokenDto.Roles.Count > 0)
-            claims.AddRange(tokenDto.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(tokenDto.Roles.Select(role => new Claim("role", role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt!.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

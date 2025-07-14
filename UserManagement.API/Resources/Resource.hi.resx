@@ -138,8 +138,17 @@
   <data name="InvalidRefreshToken" xml:space="preserve">
     <value>अमान्य रीफ़्रेश टोकन</value>
   </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>अमान्य टोकन</value>
+  </data>
   <data name="InvalidUser" xml:space="preserve">
     <value>अमान्य उपयोगकर्ता</value>
+  </data>
+  <data name="NotExists" xml:space="preserve">
+    <value>अस्तित्व में नहीं है</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>नहीं मिला</value>
   </data>
   <data name="RequiredDto" xml:space="preserve">
     <value>डेटा आवश्यक है</value>

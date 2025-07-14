@@ -21,12 +21,14 @@ public class AccountServices : IAccountServices
     private JWT _jwt;
     private readonly IUserManagementRepository<AppUserRoles> _userRoleRepo;
     private readonly IUserManagementRepository<AppRole> _roleRepo;
+    private readonly IUserManagementRepository<AppUser> _userRepo;
     private readonly IUserManagementUnitOfWork _unitOfWork;
     public AccountServices(UserManager<AppUser> userManager, ILogger<AccountServices> logger,
                             SignInManager<AppUser> signInManagerSingin, ILocalizer localizer,
                             ITokenServices tokenServices, IConfiguration configuration,
                             IUserManagementRepository<AppUserRoles> userRoleRepo,
                             IUserManagementRepository<AppRole> roleRepo,
+                            IUserManagementRepository<AppUser> userRepo,
                             IUserManagementUnitOfWork unitOfWork)
     {
         _userManager = userManager;
@@ -38,6 +40,7 @@ public class AccountServices : IAccountServices
         _jwt = _config.GetSection("JWT")?.Get<JWT>();
         _userRoleRepo = userRoleRepo;
         _roleRepo = roleRepo;
+        _userRepo = userRepo;
         _unitOfWork = unitOfWork;
     }
     public async Task<APIResponse> LoginUser(LoginDto loginDto)
@@ -70,21 +73,28 @@ public class AccountServices : IAccountServices
         return tokensResponse;
     }
 
-    public async Task<APIResponse> RefeshToken(RefreshTokenModel model, string email)
+    public async Task<APIResponse> RefeshToken(RefreshTokenModel model)
     {
-        if (string.IsNullOrEmpty(model.RefreshToken) || string.IsNullOrEmpty(model.RefreshToken) || string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(model.AccessToken) || string.IsNullOrEmpty(model.RefreshToken))
             return new APIResponse(400, $"Refresh token model {_localizer["Required"]}");
 
+        var decodedTokenResponse = _tokenServices.DecodeToken(model.AccessToken).Result;
+        if (decodedTokenResponse.StatusCode != 200)
+            return decodedTokenResponse;
 
-        var user = await _userManager.FindByEmailAsync(email);
+        var tokenData = decodedTokenResponse.Data as TokenDto;
+
+        var user = await _userRepo.WhereAsync(obj => obj.Email == tokenData.Email);
         if (user == null)
-            return new APIResponse(400, $"{_localizer["UserNotFound"]}");
+            return new APIResponse(401, $"{_localizer["UserNotFound"]}");
 
 
         if (user.RefreshToken != model.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
             return new APIResponse(400, $"{_localizer["InvalidRefreshToken"]}");
 
         var roles = GetUserRoles(user.Id).Result;
+        if (tokenData.Roles.Any(role => !roles.Exists(obj => role == obj))) return new APIResponse(401, $"{_localizer["InvalidToken"]}");
+
         var tokenResponse = await _tokenServices.GenerateTokenAsync(new TokenDto(user.Email!, roles));
         var authResponse = tokenResponse.Data as AuthResponse;
         user.RefreshToken = authResponse.RefreshToken;

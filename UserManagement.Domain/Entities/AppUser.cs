@@ -13,7 +13,7 @@ public class AppUser : IdentityUser<long>
     public DateTime? DeletedAt { set; get; } = null;
     public bool IsDeleted { get; set; } = false;
     public string Email { set; get; }
-    public string RefreshToken { set; get; }
+    public string? RefreshToken { set; get; }
     public DateTime? RefreshTokenExpiryTime { set; get; }
 
     public List<AppUserRoles> UserRoles { set; get; }

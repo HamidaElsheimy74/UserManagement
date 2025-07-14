@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Application.DTOs;
 using UserManagement.Application.Interfaces;
-using UserManagement.Common.Helpers;
 using UserManagement.Domain.Interfaces;
 using UserManagement.Infrastructure.Models;
 
@@ -45,14 +44,10 @@ public class AccountController : BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    [Authorize]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenModel model)
     {
-        var email = User?.Claims?.FirstOrDefault(obj => obj.Value == "Email")?.Value;
-        if (email == null)
-            return Unauthorized(new APIResponse(401, _localizer["InvalidUser"]));
 
-        var response = await _accountServices.RefeshToken(model, email);
+        var response = await _accountServices.RefeshToken(model);
         return Ok(response);
     }
 }

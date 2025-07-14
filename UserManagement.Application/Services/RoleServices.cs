@@ -34,7 +34,7 @@ public class RoleServices : IRoleServices
         if (role == null)
         {
             _logger.LogError("Role data is required.");
-            return new APIResponse(400, "Role " + _localizer["Required"]);
+            return new APIResponse(400, "Role " + _localizer["RequiredDto"]);
         }
 
         var isRoleExists = await _roleRepository.AnyAsync(r => r.Name == role.RoleName && !r.IsDeleted);
@@ -64,7 +64,7 @@ public class RoleServices : IRoleServices
         if (roleId <= 0)
         {
             _logger.LogError("RoleId is not valid.");
-            return new APIResponse(400, "RoleId" + _localizer["NotValis"]);
+            return new APIResponse(400, "RoleId" + _localizer["NotValid"]);
         }
         var role = await _roleRepository.GetByIdAsync(roleId);
         if (role == null || role.IsDeleted)
@@ -101,24 +101,25 @@ public class RoleServices : IRoleServices
             return new APIResponse(400, "roleId" + _localizer["NotValid"]);
         }
 
-        var role = await _roleRepository.Where(r => r.Id == roleId && !r.IsDeleted);
-        return role == null || !role.Any() ? new APIResponse(400, "Role" + _localizer["NotFound"])
+        var role = await _roleRepository.WhereAsync(r => r.Id == roleId && !r.IsDeleted);
+
+        return role == null ? new APIResponse(400, "Role" + _localizer["NotFound"])
                                 : new APIResponse(200, "", _mapper.Map<RoleDto>(role));
     }
 
     public async Task<APIResponse> UpdateRoleAsync(RoleDto role)
     {
         _logger.LogTrace($"Updating role with name: {role.RoleName}");
-        if (role == null)
+        if (role == null || role.RoleId <= 0)
         {
             _logger.LogError("Role data is required.");
-            return new APIResponse(400, "Role " + _localizer["Required"]);
+            return new APIResponse(400, "Role " + _localizer["RequiredDto"]);
         }
         var oldRole = await _roleRepository.WhereAsync(r => r.Id == role.RoleId && !r.IsDeleted);
         if (oldRole == null)
         {
             _logger.LogError("Role is not exist.");
-            return new APIResponse(400, "Role" + _localizer["Exists"]);
+            return new APIResponse(400, "Role " + _localizer["NotExists"]);
         }
 
         oldRole.Description = role.Description;
