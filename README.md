@@ -16,6 +16,7 @@ The **UserManagement API** is a robust solution for managing user, role and retr
 - **MSTest** for unit testing
 - **Dependency Injection** for modularity and testability.
 - **Sql Server** for saving user & roles database.
+- **Entity FrameWork core** as ORM with code first approach.
 
 ## Installation
 1. .NET 8 SDK.
@@ -26,7 +27,9 @@ The **UserManagement API** is a robust solution for managing user, role and retr
 6.  Build the project.
 
  ## Configuration
-1-Set launch profile to Development & use these credintial to login & get Access/Refresh tokens to be able to use the apis.
+1- Update database with the db objects that's made inside the migration by writting the following command in PM: update-database.
+2-Press F5 to start debugging & run the code.
+3-Set launch profile to Development & use these credintial to login & get Access/Refresh tokens to be able to use the apis.
 
 	 {
 		 "userName": "admin@gmail.com",
@@ -38,4 +41,4 @@ The **UserManagement API** is a robust solution for managing user, role and retr
 - **Note 2**: DB is Seeded by both user & Admin roles to start working with the Apis.
  
 
-2-Press F5 to start debugging & run the code.
+
