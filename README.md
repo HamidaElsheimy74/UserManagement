@@ -27,7 +27,7 @@ The **UserManagement API** is a robust solution for managing user, role and retr
 6.  Build the project.
 
  ## Configuration
-1- Update database with the db objects that's made inside the migration by writting the following command in PM: update-database.
+1- Update database with the db objects that're made inside the migration by writting the following command in PM: update-database.
 
 2-Press F5 to start debugging & run the code.
 
